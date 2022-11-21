@@ -32,7 +32,6 @@ export class Player {
 
     public handleKeyDown(event: KeyboardEvent): void
     {
-        console.log(this);
         switch (event.key) {
             case this.bind.up:
                 this.paddle.keyDownUp();

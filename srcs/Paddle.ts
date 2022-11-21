@@ -61,6 +61,13 @@ export class Paddle
         this.dx = 0;
     }
 
+    public move(ctx: CanvasRenderingContext2D): void
+    {
+        this.posX = this.posX + this.dx;
+        this.posY = this.posY + this.dy;
+        this.draw(ctx);
+    }
+
     public draw(ctx :CanvasRenderingContext2D): void
     {
         // Draw paddle

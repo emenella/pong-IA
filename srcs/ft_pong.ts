@@ -69,8 +69,8 @@ export class ft_pong {
     {
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.player0.paddle.draw(this.ctx);
-        this.player1.paddle.draw(this.ctx);
+        this.player0.paddle.move(this.ctx);
+        this.player1.paddle.move(this.ctx);
         this.ball.draw(this.ctx);
         this.showScore();
         if(!this.isLive)
