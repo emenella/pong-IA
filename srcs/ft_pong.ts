@@ -49,17 +49,17 @@ export class ft_pong {
         // TODO player and ball setup
         this.setup = _setup;
         this.startSpeed = this.setup.ball.speed;
-        this.player0 = new Player(this.setup.player0.name, this.setup.player0.bind, new Paddle(this.setup.player0.color, this.setup.player0.width, this.setup.player0.length, 10, this.ctx.canvas.height / 2, this.setup.player0.speedX, this.setup.player0.speedY));
-        this.player1 = new Player(this.setup.player1.name, this.setup.player1.bind, new Paddle(this.setup.player1.color, this.setup.player1.width, this.setup.player1.length, this.ctx.canvas.width - 10, this.ctx.canvas.height / 2, this.setup.player1.speedX, this.setup.player1.speedY));
+        this.player0 = new Player(this.setup.player0.name, this.setup.player0.bind, new Paddle(this.setup.player0.color, this.setup.player0.width, this.setup.player0.length, 10, (this.ctx.canvas.height / 2) - this.setup.player0.length / 2, this.setup.player0.speedX, this.setup.player0.speedY));
+        this.player1 = new Player(this.setup.player1.name, this.setup.player1.bind, new Paddle(this.setup.player1.color, this.setup.player1.width, this.setup.player1.length, this.ctx.canvas.width - 10, (this.ctx.canvas.height / 2) - this.setup.player1.length / 2, this.setup.player1.speedX, this.setup.player1.speedY));
         this.ball = new Ball(this.setup.ball.radius, this.ctx.canvas.width / 2, this.ctx.canvas.height / 2, this.startSpeed, 0, this.setup.ball.color);	
         this.isLive = false;
         this.isFinish = false;
+        this.player0.setKeyBindings();
+        this.player1.setKeyBindings();
         document.addEventListener("keydown", (event) => {
             if (event.key == " ")
             {
                 this.isLive = true;
-                this.player0.setKeyBindings();
-                this.player1.setKeyBindings();
             }
         });
         this.draw();
@@ -72,10 +72,11 @@ export class ft_pong {
         this.player0.paddle.draw(this.ctx);
         this.player1.paddle.draw(this.ctx);
         this.ball.draw(this.ctx);
+        this.showScore();
         if(!this.isLive)
         {
             this.ctx.font = "30px Arial";
-            this.ctx.fillText("Press space to start", this.canvas.width / 2 - 150, this.canvas.height / 2);
+            this.ctx.fillText("Press space to start", this.canvas.width / 2 - 150, this.canvas.height / 2 - 150);
         }
     }
 
@@ -85,15 +86,12 @@ export class ft_pong {
         {
             if (this.isLive)	
             {
-                this.draw();
                 this.ball.move(this.ctx, this.player0, this.player1);
-                this.player0.paddle.draw(this.ctx);
-                this.player1.paddle.draw(this.ctx);
                 this.checkGoal();
-                this.ball.draw(this.ctx);
+                this.draw();
             }
         }
-        await setTimeout(() => {}, 1000/60);
+        await setTimeout(() => {}, 1000/144);
         window.requestAnimationFrame(() => this.loop());
     }
 
@@ -105,8 +103,10 @@ export class ft_pong {
             console.log(this.player0.getName() + " score");
             this.ball = new Ball(this.ball.getRadius(), this.ctx.canvas.width / 2, this.ctx.canvas.height / 2,this.startSpeed , 0, this.ball.getColor());
             this.isLive = false;
+            this.player0.unbindKeys();
+            this.player1.unbindKeys();
             console.log(this.player0.getScore() + "-" + this.player1.getScore());
-            this.showScore();
+            // this.showScore();
         }
         else
         {
@@ -116,16 +116,16 @@ export class ft_pong {
                 console.log(this.player1.getName() + " score");
                 this.ball = new Ball(this.ball.getRadius(), this.ctx.canvas.width / 2, this.ctx.canvas.height / 2, this.startSpeed, 0, this.ball.getColor());
                 this.isLive = false;
+                this.player0.unbindKeys();
+                this.player1.unbindKeys();
                 console.log(this.player0.getScore() + "-" + this.player1.getScore());
-                this.showScore();
+                // this.showScore();
             }
         }
     }
 
     public showScore(): void
     {
-        this.ctx.fillStyle = "black";
-        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.fillStyle = "white";
         this.ctx.font = "30px Arial";
         this.ctx.fillText(this.player0.getName() + " : " + this.player0.getScore(), 10, 30);

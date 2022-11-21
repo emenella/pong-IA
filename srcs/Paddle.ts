@@ -4,6 +4,10 @@ export class Paddle
     private posX: number;
     private posY: number;
 
+    // direction of paddle
+    private dy: number;
+    private dx: number;
+
     // size of paddle
     private width: number;
     private length: number;
@@ -22,33 +26,39 @@ export class Paddle
         this.veloX = _speedX;
         this.veloY = _speedY;
         this.color = _color;
+        this.dx = 0;
+        this.dy = 0;
         console.log("Paddle created: " + this.posX + " " + this.posY + " " + this.width + " " + this.length + " " + this.veloX + " " + this.veloY);
     }
 
-    public moveUp(ctx: CanvasRenderingContext2D): void
+    public keyDownUp(): void
     {
-        console.log("Move up " + this.posY + " " + this.veloY);
-        if (this.posY - this.veloY >= 0)
-            this.posY -= this.veloY;
+        this.dy = -this.veloY;
     }
 
-    public moveDown(ctx: CanvasRenderingContext2D): void
+    public keyDownDown(): void
     {
-        console.log("Move down " + this.posY + " " + this.veloY);
-        if (this.posY + this.veloY <= ctx.canvas.height - this.length)
-            this.posY += this.veloY;
+        this.dy = this.veloY;
     }
 
-    public moveLeft(ctx: CanvasRenderingContext2D): void
+    public keyDownLeft(): void
     {
-        if (this.posX - this.veloX >= 0)
-            this.posX -= this.veloX;
+        this.dx = -this.veloX;
     }
 
-    public moveRight(ctx: CanvasRenderingContext2D): void
+    public keyDownRight(): void
     {
-        if (this.posX + this.veloX <= ctx.canvas.width - this.width)
-            this.posX += this.veloX;
+        this.dx = this.veloX;
+    }
+
+    public keyUpY(): void
+    {
+        this.dy = 0;
+    }
+
+    public keyUpX(): void
+    {
+        this.dx = 0;
     }
 
     public draw(ctx :CanvasRenderingContext2D): void
