@@ -49,8 +49,8 @@ export class ft_pong {
         // TODO player and ball setup
         this.setup = _setup;
         this.startSpeed = this.setup.ball.speed;
-        this.player0 = new Player(this.setup.player0.name, this.setup.player0.bind, new Paddle(this.setup.player0.color, this.setup.player0.width, this.setup.player0.length, 10, (this.ctx.canvas.height / 2) - this.setup.player0.length / 2, this.setup.player0.speedX, this.setup.player0.speedY));
-        this.player1 = new Player(this.setup.player1.name, this.setup.player1.bind, new Paddle(this.setup.player1.color, this.setup.player1.width, this.setup.player1.length, this.ctx.canvas.width - 10, (this.ctx.canvas.height / 2) - this.setup.player1.length / 2, this.setup.player1.speedX, this.setup.player1.speedY));
+        this.player0 = new Player(this.setup.player0.name, this.setup.player0.bind, new Paddle(this.setup.player0.color, this.setup.player0.width, this.setup.player0.length, 10, this.ctx.canvas.height / 2, this.setup.player0.speedX, this.setup.player0.speedY));
+        this.player1 = new Player(this.setup.player1.name, this.setup.player1.bind, new Paddle(this.setup.player1.color, this.setup.player1.width, this.setup.player1.length, this.ctx.canvas.width - 10 - this.setup.player1.width, this.ctx.canvas.height / 2, this.setup.player1.speedX, this.setup.player1.speedY));
         this.ball = new Ball(this.setup.ball.radius, this.ctx.canvas.width / 2, this.ctx.canvas.height / 2, this.startSpeed, 0, this.setup.ball.color);	
         this.isLive = false;
         this.isFinish = false;

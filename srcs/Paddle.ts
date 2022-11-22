@@ -63,8 +63,25 @@ export class Paddle
 
     public move(ctx: CanvasRenderingContext2D): void
     {
-        this.posX = this.posX + this.dx;
-        this.posY = this.posY + this.dy;
+        this.posX += this.dx;
+        this.posY += this.dy;
+        //limit
+        if (this.posX - this.width / 2 < 0)
+        {
+            this.posX = this.width / 2;
+        }
+        if (this.posX + this.width / 2 > ctx.canvas.width)
+        {
+            this.posX = ctx.canvas.width - (this.width / 2);
+        }
+        if (this.posY - this.length / 2 < 0)
+        {
+            this.posY = this.length / 2;
+        }
+        if (this.posY + this.length / 2 > ctx.canvas.height)
+        {
+            this.posY = ctx.canvas.height - (this.length / 2);
+        }
         this.draw(ctx);
     }
 
@@ -72,8 +89,8 @@ export class Paddle
     {
         // Draw paddle
         ctx.fillStyle = this.color;
-        ctx.fillRect(this.posX, this.posY, this.width/2, this.length);
-        ctx.fillRect(this.posX, this.posY, -this.width/2, this.length);
+        ctx.fillRect(this.posX, this.posY, this.width, this.length/2);
+        ctx.fillRect(this.posX, this.posY, this.width, -this.length/2);
     }
 
     public getPosX(): number

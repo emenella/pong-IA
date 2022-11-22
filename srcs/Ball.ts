@@ -35,19 +35,23 @@ export class Ball
     
     private checkPlayer(player: Player): boolean
     {
-        if (this.posX + this.radius >= player.paddle.getPosX() && this.posX - this.radius <= player.paddle.getPosX() + player.paddle.getWidth() && this.posY + this.radius >= player.paddle.getPosY() && this.posY - this.radius <= player.paddle.getPosY() + player.paddle.getLength())
+        if (this.posX + this.radius > player.paddle.getPosX() - player.paddle.getWidth() && this.posX - this.radius < player.paddle.getPosX() + player.paddle.getWidth())
         {
-            console.log("Ball hit player");
-            return true;
+            if (this.posY + this.radius > player.paddle.getPosY() - player.paddle.getLength() && this.posY - this.radius < player.paddle.getPosY() + player.paddle.getLength())
+            {
+                this.veloY = (this.posY - player.paddle.getPosY()) / player.paddle.getLength() * 10;
+                return true;
+            }
         }
         return false;
     }
     
     private checkWall(ctx :CanvasRenderingContext2D): boolean
     {
-        if (this.posX + this.radius >= ctx.canvas.width || this.posX - this.radius <= 0)
+        if (this.posY + this.radius >= ctx.canvas.height || this.posY - this.radius <= 0)
         {
-            console.log("Ball hit wall");
+            console.log("Wall hit");
+            this.veloX = -this.veloX;
             return true;
         }
         return false;
