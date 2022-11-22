@@ -1,6 +1,7 @@
 import { Player, bind } from "./player";
 import { Ball } from "./Ball";
 import { Paddle } from "./Paddle";
+import { easyAI } from "./simpleIA";
 
 export interface general {
     ScoreWin: number;
@@ -69,6 +70,8 @@ export class ft_pong {
     {
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+        this.ctx.fillStyle = "white";
+        this.ctx.fillRect(this.ctx.canvas.width / 2, 0, 1, this.ctx.canvas.height)
         this.player0.paddle.move(this.ctx);
         this.player1.paddle.move(this.ctx);
         this.ball.draw(this.ctx);
@@ -91,7 +94,7 @@ export class ft_pong {
                 this.draw();
             }
         }
-        await setTimeout(() => {}, 1000/144);
+        await setTimeout(() => {}, 1000/60);
         window.requestAnimationFrame(() => this.loop());
     }
 
@@ -100,27 +103,24 @@ export class ft_pong {
         if (this.ball.getPosX() + this.ball.getRadius() >= this.canvas.width)
         {
             this.player0.score++;
-            console.log(this.player0.getName() + " score");
-            this.ball = new Ball(this.ball.getRadius(), this.ctx.canvas.width / 2, this.ctx.canvas.height / 2,this.startSpeed , 0, this.ball.getColor());
-            this.isLive = false;
             this.player0.unbindKeys();
             this.player1.unbindKeys();
+            this.player0.paddle.setPos(10, this.ctx.canvas.height / 2);
+            this.player1.paddle.setPos(this.ctx.canvas.width - 10 - this.player1.paddle.getWidth(), this.ctx.canvas.height / 2);
+            this.ball = new Ball(this.ball.getRadius(), this.ctx.canvas.width / 2, this.ctx.canvas.height / 2,this.startSpeed , 0, this.ball.getColor());
+            this.isLive = false;
             console.log(this.player0.getScore() + "-" + this.player1.getScore());
-            // this.showScore();
         }
-        else
+        else if (this.ball.getPosX() - this.ball.getRadius() <= 0)
         {
-            if (this.ball.getPosX() - this.ball.getRadius() <= 0)
-            {
                 this.player1.score++;
-                console.log(this.player1.getName() + " score");
-                this.ball = new Ball(this.ball.getRadius(), this.ctx.canvas.width / 2, this.ctx.canvas.height / 2, this.startSpeed, 0, this.ball.getColor());
-                this.isLive = false;
                 this.player0.unbindKeys();
                 this.player1.unbindKeys();
+                this.player0.paddle.setPos(10, this.ctx.canvas.height / 2);
+                this.player1.paddle.setPos(this.ctx.canvas.width - 10 - this.player1.paddle.getWidth(), this.ctx.canvas.height / 2);
+                this.ball = new Ball(this.ball.getRadius(), this.ctx.canvas.width / 2, this.ctx.canvas.height / 2, -this.startSpeed, 0, this.ball.getColor());
+                this.isLive = false;
                 console.log(this.player0.getScore() + "-" + this.player1.getScore());
-                // this.showScore();
-            }
         }
     }
 

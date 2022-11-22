@@ -93,6 +93,12 @@ export class Paddle
         ctx.fillRect(this.posX, this.posY, this.width, -this.length/2);
     }
 
+    public setPos(nPosX: number, nPosY: number)
+    {
+        this.posX = nPosX;
+        this.posY = nPosY;
+    }
+
     public getPosX(): number
     {
         return this.posX;

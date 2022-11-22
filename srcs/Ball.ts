@@ -33,25 +33,26 @@ export class Ball
         ctx.stroke();
     }
     
-    private checkPlayer(player: Player): boolean
+    private collisionPlayer(player: Player): boolean
     {
         if (this.posX + this.radius > player.paddle.getPosX() - player.paddle.getWidth() && this.posX - this.radius < player.paddle.getPosX() + player.paddle.getWidth())
         {
             if (this.posY + this.radius > player.paddle.getPosY() - player.paddle.getLength() && this.posY - this.radius < player.paddle.getPosY() + player.paddle.getLength())
             {
-                this.veloY = (this.posY - player.paddle.getPosY()) / player.paddle.getLength() * 10;
+                this.veloY = (player.paddle.getPosY() - this.posY) / player.paddle.getLength() * 10;
+                this.veloX = -this.veloX;
                 return true;
             }
         }
         return false;
     }
     
-    private checkWall(ctx :CanvasRenderingContext2D): boolean
+    private collisionWall(ctx :CanvasRenderingContext2D): boolean
     {
         if (this.posY + this.radius >= ctx.canvas.height || this.posY - this.radius <= 0)
         {
             console.log("Wall hit");
-            this.veloX = -this.veloX;
+            this.veloY = -this.veloY;
             return true;
         }
         return false;
@@ -59,11 +60,9 @@ export class Ball
 
     public move(ctx: CanvasRenderingContext2D, player0: Player, player1: Player): void
     {
-        if (this.checkWall(ctx) || this.checkPlayer(player0) || this.checkPlayer(player1))
-        {
-            this.veloX = -this.veloX;
-            this.veloY = -this.veloY;
-        }
+        this.collisionWall(ctx);
+        this.collisionPlayer(player0);
+        this.collisionPlayer(player1);
         this.posX += this.veloX;
         this.posY += this.veloY;
     }
