@@ -16,7 +16,7 @@ const setup: Setup = {
         color: "red",
         length: 100,
         width: 10,
-        speedX: 0,
+        speedX: 10,
         speedY: 10
     },
     player1: {

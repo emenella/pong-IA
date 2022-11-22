@@ -5,7 +5,7 @@
   "main": "main.ts",
   "scripts": {
     "build": "npx webpack",
-    "testEnv": "nodemon --exec webpack"
+    "webpack": "nodemon --exec webpack"
   },
   "author": "emenella",
   "license": "ISC",

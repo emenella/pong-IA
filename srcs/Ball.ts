@@ -41,6 +41,7 @@ export class Ball
             {
                 this.veloY = (player.paddle.getPosY() - this.posY) / player.paddle.getLength() * 10;
                 this.veloX = -this.veloX;
+                // this.accelerate();
                 return true;
             }
         }
@@ -58,11 +59,24 @@ export class Ball
         return false;
     }
 
+    public accelerate()
+    {
+        this.veloX *= 1.1;
+        this.veloY *= 1.1;
+    }
+
+    public setPos(x: number, y: number, dx: number, dy: number)
+    {
+        this.posX = x;
+        this.posY = y;
+        this.veloX = dx;
+        this.veloY = dy;
+    }
+
     public move(ctx: CanvasRenderingContext2D, player0: Player, player1: Player): void
     {
-        this.collisionWall(ctx);
-        this.collisionPlayer(player0);
-        this.collisionPlayer(player1);
+        if (this.collisionWall(ctx) || this.collisionPlayer(player0) || this.collisionPlayer(player1))
+        {}
         this.posX += this.veloX;
         this.posY += this.veloY;
     }
