@@ -41,7 +41,7 @@ export class Ball
             {
                 this.veloY = (player.paddle.getPosY() - this.posY) / player.paddle.getLength() * 10;
                 this.veloX = -this.veloX;
-                // this.accelerate();
+                this.accelerate();
                 return true;
             }
         }
@@ -61,8 +61,8 @@ export class Ball
 
     public accelerate()
     {
-        this.veloX *= 1.1;
-        this.veloY *= 1.1;
+        this.veloX *= 1.01;
+        this.veloY *= 1.01;
     }
 
     public setPos(x: number, y: number, dx: number, dy: number)

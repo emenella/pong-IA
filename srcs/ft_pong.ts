@@ -24,11 +24,18 @@ export interface ball {
     speed: number;
 }
 
+export interface server
+{
+    url: string;
+}
+
 export interface Setup {
     general: general;
     player0: player;
     player1: player;
     ball: ball;
+    server: server;
+
 }
 
 export class ft_pong {
@@ -105,11 +112,11 @@ export class ft_pong {
                 console.log("time to rending: " + (this.lastFrame - this.firstFrame) + "ms")
             }
         }
-        setTimeout(() => this.loop(), 1000/144);
+        setTimeout(() => this.loop(), 1000/60);
 
     }
 
-    private checkGoal(): void
+    protected checkGoal(): void
     {
         if (this.ball.getPosX() + this.ball.getRadius() >= this.canvas.width)
         {

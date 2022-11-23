@@ -16,8 +16,8 @@ const setup: Setup = {
         color: "red",
         length: 100,
         width: 10,
-        speedX: 10,
-        speedY: 10
+        speedX: 0,
+        speedY: 5
     },
     player1: {
         name: "Player 1",
@@ -31,12 +31,12 @@ const setup: Setup = {
         length: 100,
         width: 10,
         speedX: 0,
-        speedY: 10
+        speedY: 5
     },
     ball: {
         color: "green",
         radius: 10,
-        speed: 5
+        speed: 10
     }
 };
 const game = new ft_pong(setup);
