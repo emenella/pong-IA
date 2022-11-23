@@ -37,7 +37,8 @@ const setup: Setup = {
         color: "green",
         radius: 10,
         speed: 10
-    }
+    },
+    server: { url: undefined }
 };
 const game = new ft_pong(setup);
 game.startGame();
