@@ -1,3 +1,4 @@
+import { Socket } from "socket.io-client";
 import { Paddle } from "./Paddle";
 
 export interface bind {
@@ -5,16 +6,19 @@ export interface bind {
     down: string;
     left: string;
     right: string;
+    ready: string;
 }
 
 export class Player {
-    protected name: string;
+    private id: number;
+    private username: string;
     public score: number;
     public paddle: Paddle;
-    private bind: bind;
+    protected bind: bind;
 
-    constructor(name: string, bind: bind, paddle: Paddle) {
-        this.name = name;
+    constructor(id: number, bind: bind, paddle: Paddle, username: string) {
+        this.id = id;
+        this.username = username;
         this.score = 0;
         this.paddle = paddle;
         this.bind = bind;
@@ -75,6 +79,6 @@ export class Player {
     }
 
     public getName(): string {
-        return this.name;
+        return this.username;
     }
 }
