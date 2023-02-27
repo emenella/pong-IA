@@ -10,7 +10,7 @@ export interface bind {
 }
 
 export class Player {
-    private id: number;
+    public id: number;
     private username: string;
     public score: number;
     public paddle: Paddle;

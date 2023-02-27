@@ -52,8 +52,8 @@ export class Ball
     {
         if (this.posY + this.radius >= ctx.canvas.height || this.posY - this.radius <= 0)
         {
-            console.log("Wall hit");
             this.veloY = -this.veloY;
+            this.accelerate();
             return true;
         }
         return false;

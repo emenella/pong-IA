@@ -73,8 +73,7 @@ async function main(): Promise<void> {
     });
     socket.on("game:join", () => {
         console.log("join");
-        const game = new ft_pong(socket, user, bindUser, opposant);
-        game.startGame();
+        const game = new ft_pong(socket, user, bindUser);
     });
     socket.emit("game:search");
 }

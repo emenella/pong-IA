@@ -31,6 +31,7 @@ export interface gameInfo {
 export class PlayerClient extends Player
 {
     private socket: Socket;
+    public  isReady: boolean = false;
 
     constructor(_id: number, _bind: bind, _paddle: Paddle, _socket: Socket, username: string)
     {
@@ -58,8 +59,7 @@ export class PlayerClient extends Player
                 this.socket.emit("game:event", "+RIGHT");
                 break;
             case this.bind.ready:
-                console.log("ready");
-                this.socket.emit("game:ready");
+                this.ready();
             default:
                 break;
         }
@@ -92,5 +92,11 @@ export class PlayerClient extends Player
     public setPos(x: number, y: number): void
     {
         this.paddle.setPos(x, y);
+    }
+
+    public ready(): void
+    {
+        this.isReady = true;
+        this.socket.emit("game:ready");
     }
 }
