@@ -8,8 +8,9 @@ export class Ball
     private veloX: number;
     private veloY: number;
     private color: string;
+    private maxSpeed: number;
     
-    constructor(_radius: number, _startX: number, _startY: number, _speedX: number, _speedY: number, _color: string)
+    constructor(_radius: number, _startX: number, _startY: number, _speedX: number, _speedY: number, _color: string, _maxSpeed: number)
     {
         this.posX = _startX;
         this.posY = _startY;
@@ -17,6 +18,7 @@ export class Ball
         this.veloX = _speedX;
         this.veloY = _speedY;
         this.color = _color;
+        this.maxSpeed = _maxSpeed;
         console.log("Ball created: " + this.posX + " " + this.posY + " " + this.radius + " " + this.veloX + " " + this.veloY);
     }
 
@@ -61,8 +63,10 @@ export class Ball
 
     public accelerate()
     {
-        this.veloX *= 1.01;
-        this.veloY *= 1.01;
+        if (this.veloX < this.maxSpeed && this.veloX > -this.maxSpeed)
+            this.veloX *= 1.1;
+        if (this.veloY < this.maxSpeed && this.veloY > -this.maxSpeed)
+            this.veloY *= 1.1;
     }
 
     public setPos(x: number, y: number, dx: number, dy: number)

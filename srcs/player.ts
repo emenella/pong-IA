@@ -1,22 +1,15 @@
 import { Socket } from "socket.io-client";
 import { Paddle } from "./Paddle";
-
-export interface bind {
-    up: string;
-    down: string;
-    left: string;
-    right: string;
-    ready: string;
-}
+import { Bind } from "./interfaces/ft_pong.interface";
 
 export class Player {
     public id: number;
     private username: string;
     public score: number;
     public paddle: Paddle;
-    protected bind: bind;
+    protected bind: Bind;
 
-    constructor(id: number, bind: bind, paddle: Paddle, username: string) {
+    constructor(id: number, bind: Bind, paddle: Paddle, username: string) {
         this.id = id;
         this.username = username;
         this.score = 0;

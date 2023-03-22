@@ -1,6 +1,7 @@
-import { Player, bind } from "./player";
+import { Player } from "./player";
 import { Paddle } from "./Paddle";
 import { Socket } from "socket.io-client";
+import { Bind } from "./interfaces/ft_pong.interface";
 
 export interface gameInfo {
     player0: {
@@ -33,7 +34,7 @@ export class PlayerClient extends Player
     private socket: Socket;
     public  isReady: boolean = false;
 
-    constructor(_id: number, _bind: bind, _paddle: Paddle, _socket: Socket, username: string)
+    constructor(_id: number, _bind: Bind, _paddle: Paddle, _socket: Socket, username: string)
     {
         super(_id, _bind, _paddle, username);
         this.socket = _socket;
@@ -41,6 +42,7 @@ export class PlayerClient extends Player
 
     public handleKeyDown(event: KeyboardEvent): void
     {
+        console.log(event.key);
         switch (event.key) {
             case this.bind.up:
                 this.paddle.keyDownUp();
@@ -96,6 +98,7 @@ export class PlayerClient extends Player
 
     public ready(): void
     {
+        console.log("ready")
         this.isReady = true;
         this.socket.emit("game:ready");
     }

@@ -1,25 +1,12 @@
-import { ft_pong } from "./ft_pong";
-import { bind } from "./player";
-import { io, Socket } from "socket.io-client";
+import { Game } from "./Game";
+import { User } from "./interfaces/ft_pong.interface";
+import { Socket, io } from "socket.io-client";
 
 
 let userid = 0;
-let opponentid = 0;
-
-export interface User {
-    id: number;
-    username: string;
-    isProfileComplete: boolean;
-    elo: number;
-}
-
-const bindUser: bind = {
-    up: "ArrowUp",
-    down: "ArrowDown",
-    left: "ArrowLeft",
-    right: "ArrowRight",
-    ready: " "	
-}
+let gameId : string;
+let game: Game;
+let isQueue = false;
 
 async function getMe(token: string): Promise<User> {
     let user = await fetch("https://localhost/api/users/me", {
@@ -47,7 +34,7 @@ async function login(id: number): Promise<string> {
 }
 
 async function getUser(id: number, token: string): Promise<User> {
-    let user = await fetch("https://localhost/api/users/?id=" + id, {
+    let user = await fetch("https://localhost/api/users/id/?id=" + id, {
     method: "GET",
     mode: "cors",
     headers: {
@@ -59,30 +46,60 @@ return await user.json() as User;
 }
 
 
-async function main(): Promise<void> {
+async function init(): Promise<void> {
+    let canva = document.getElementById("pong") as HTMLCanvasElement;
+    let ctx = canva.getContext("2d");
     console.log(userid);
-    console.log(opponentid);
-    let token: string = await login(userid);
-    console.log(token);
-    let opposant: User = await getUser(opponentid, token);
-    let user: User = await getMe(token);
+    const token = await login(userid);
+    console.log(await getUser(userid, token));
+    const user = await getMe(token);
     console.log(user);
-    let socket: Socket = io("https://localhost/game", { extraHeaders: { Authorization: token } });
-    socket.on("game:search", (_ids :Array<string>) => {
-        socket.emit("game:join", _ids[0]);
-    });
-    socket.on("game:join", () => {
-        console.log("join");
-        const game = new ft_pong(socket, user, bindUser);
-    });
-    socket.emit("game:search");
+    let socketGame: Socket = io("https://localhost/game", { extraHeaders: { Authorization: token } });
+    let socketMatchmaking: Socket = io("https://localhost/matchmaking", { extraHeaders: { Authorization: token } });
+    game = new Game(socketGame, socketMatchmaking ,user, ctx);
+}
+
+async function join(): Promise<void> {
+    game.joinGame(gameId);
+}
+
+async function leave(): Promise<void> {
+    game.leaveGame();
+}
+
+async function Spectate(): Promise<void> {
+    game.spectateGame(gameId);
+}
+
+async function searchGame(): Promise<void> {
+    game.searchGame();
+    await setTimeout(() => {
+        console.log(game.getSearchGame());
+    }  , 1000);
+}
+
+async function matchmaking(): Promise<void> {
+    if (isQueue) {
+        game.leaveQueue();
+        isQueue = false;
+        document.getElementById("matchmaking").innerHTML = "Matchmaking";
+    } else {
+        game.joinQueue();
+        isQueue = true;
+        document.getElementById("matchmaking").innerHTML = "Leave Queue";
+    }
 }
 
 // execute main when press button with id join and get id user and id room
-document.getElementById("join").addEventListener("click", main);
+document.getElementById("join").addEventListener("click", join);
+document.getElementById("leave").addEventListener("click", leave);
+document.getElementById("spectate").addEventListener("click", Spectate);
+document.getElementById("search").addEventListener("click", searchGame);
+document.getElementById("login").addEventListener("click", init);
+document.getElementById("matchmaking").addEventListener("click", matchmaking);
 document.getElementById("user").addEventListener("change", (event) => {
     userid = parseInt((<HTMLInputElement>event.target).value);
 });
-document.getElementById("opposant").addEventListener("change", (event) => {
-    opponentid = parseInt((<HTMLInputElement>event.target).value);
+document.getElementById("gameId").addEventListener("change", (event) => {
+    gameId = (<HTMLInputElement>event.target).value;
 });

@@ -1,131 +1,75 @@
-import { Player, bind } from "./player";
+import { Player } from "./player";
 import { Ball } from "./Ball";
 import { Paddle } from "./Paddle";
 import { Socket } from "socket.io-client";
 import { PlayerClient } from "./playerClient";
 import { PlayerRemote } from "./playerRemote";
-import { User } from "./main";
-
-export interface general {
-    id: string;
-    ScoreWin: number;
-    Overtime: boolean;
-    OvertimeScore: number;
-    height: number;
-    width: number;
-}
-
-export interface player {
-    id: number;
-    username: string;
-    color: string;
-    length: number;
-    width: number;
-    x: number;
-    y: number;
-    speedX: number;
-    speedY: number;
-}
-
-export interface ball {
-    color: string;
-    radius: number;
-    speed: number;
-}
-
-export class GameInfo
-{
-    player0: {
-        score: number;
-        paddle: {
-            x: number;
-            y: number;
-            dx: number;
-            dy: number;
-            width: number;
-            height: number;
-        };
-    }
-    player1: {
-        score: number;
-        paddle: {
-            x: number;
-            y: number;
-            dx: number;
-            dy: number;
-            width: number;
-            height: number;
-        }
-    }
-    ball: {
-        x: number;
-        y: number;
-        dx: number;
-        dy: number;
-        radius: number;
-    }
-}
-
-export interface Setup {
-    general: general;
-    player0: player;
-    player1: player;
-    ball: ball;
-}
+import { User } from "./interfaces/ft_pong.interface";
+import { Setup, GameInfo, Bind, GameSettings } from "./interfaces/ft_pong.interface";
 
 export class ft_pong {
 
-    private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
     private player0: PlayerClient;
     private player1: PlayerClient;
     private ball: Ball;
     private isLive: boolean;
     private isFinish: boolean;
+    private isSpec: boolean;
     private startSpeed: number;
     private setup: Setup;
-    private precFrame: number;
 
     private user: User;
-    private bind: bind;
+    private bind: Bind;
 
     private ratioX: number;
     private ratioY: number;
 
+    private width: number;
+    private height: number;
+
     private socket: Socket;
 
-    constructor(_socket: Socket, user: User, bind: bind)
+    constructor(_socket: Socket, gameSetting: GameSettings, ctx: CanvasRenderingContext2D, setup: Setup)
     {
-        this.canvas = <HTMLCanvasElement>document.getElementById("pong");
-        this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
+        this.ctx = ctx;
         // get setup from server
         this.socket = _socket;
-        this.user = user;
-        this.bind = bind;
-        this.socket.on("game:setup", this.setupGame);
-        this.socket.emit("game:setup");
+        this.user = gameSetting.user;
+        this.bind = gameSetting.bind;
+        this.width = gameSetting.width;
+        this.height = gameSetting.height;
+        console.log(this.width + " " + this.height);
+        this.setupGame(setup);
     }
 
-    public setupGame = (setup: Setup) => {
+    public setupGame (setup: Setup) {
         this.setup = setup;
         console.log(this.setup);
-        this.ratioX = this.canvas.width / this.setup.general.width;
-        this.ratioY = this.canvas.height / this.setup.general.height;
-        console.log(this.ratioX, this.ratioY);
+        this.ratioX = this.width / this.setup.general.width;
+        this.ratioY = this.height / this.setup.general.height;
         if (this.user.id == this.setup.player0.id)
         {
+            console.log("player0");
             this.player0 = new PlayerClient(this.setup.player0.id, this.bind, new Paddle(this.setup.player0.color, this.setup.player0.width * this.ratioX, this.setup.player0.length * this.ratioY, 10, this.ctx.canvas.height / 2, this.setup.player0.speedX * this.ratioX, this.setup.player0.speedY * this.ratioY), this.socket, this.setup.player0.username);
             this.player0.setKeyBindings();
             this.player1 = new PlayerRemote(this.setup.player1.id, new Paddle(this.setup.player1.color, this.setup.player1.width * this.ratioX, this.setup.player1.length * this.ratioY, this.ctx.canvas.width - 10 - this.setup.player1.width, this.ctx.canvas.height / 2, this.setup.player1.speedX * this.ratioX, this.setup.player1.speedY * this.ratioY), this.socket, this.setup.player1.username);
         }
-        else
+        else if (this.user.id == this.setup.player1.id)
         {
+            console.log("player1");
             this.player0 = new PlayerRemote(this.setup.player0.id, new Paddle(this.setup.player0.color, this.setup.player0.width * this.ratioX, this.setup.player0.length * this.ratioY, 10, this.ctx.canvas.height / 2, this.setup.player0.speedX * this.ratioX, this.setup.player0.speedY * this.ratioY), this.socket, this.setup.player0.username);
             this.player1 = new PlayerClient(this.setup.player1.id, this.bind, new Paddle(this.setup.player1.color, this.setup.player1.width * this.ratioX, this.setup.player1.length * this.ratioY, this.ctx.canvas.width - 10 - this.setup.player1.width, this.ctx.canvas.height / 2, this.setup.player1.speedX * this.ratioX, this.setup.player1.speedY * this.ratioY), this.socket, this.setup.player1.username);
             this.player1.setKeyBindings();
         }
+        else
+        {
+            this.player0 = new PlayerRemote(this.setup.player0.id, new Paddle(this.setup.player0.color, this.setup.player0.width * this.ratioX, this.setup.player0.length * this.ratioY, 10, this.ctx.canvas.height / 2, this.setup.player0.speedX * this.ratioX, this.setup.player0.speedY * this.ratioY), this.socket, this.setup.player0.username);
+            this.player1 = new PlayerRemote(this.setup.player1.id, new Paddle(this.setup.player1.color, this.setup.player1.width * this.ratioX, this.setup.player1.length * this.ratioY, this.ctx.canvas.width - 10 - this.setup.player1.width, this.ctx.canvas.height / 2, this.setup.player1.speedX * this.ratioX, this.setup.player1.speedY * this.ratioY), this.socket, this.setup.player1.username);
+            this.isSpec = true;
+        }
         this.startSpeed = this.setup.ball.speed * this.ratioX;
-        this.ball = new Ball(this.setup.ball.radius * this.ratioY, this.ctx.canvas.width / 2, this.ctx.canvas.height / 2, this.startSpeed, 0, this.setup.ball.color);
+        this.ball = new Ball(this.setup.ball.radius * this.ratioY, this.ctx.canvas.width / 2, this.ctx.canvas.height / 2, this.startSpeed, 0, this.setup.ball.color, this.setup.ball.maxSpeed * this.ratioX);
         this.isLive = false;
         this.isFinish = false;
         this.socket.on("game:info", this.handleGameUpdate);
@@ -133,6 +77,7 @@ export class ft_pong {
         this.socket.on("game:live", this.handleLive);
         this.socket.on("game:unready", this.handlerUnready);
         this.socket.emit("game:info");
+        this.draw();
         this.startGame();
     }
 
@@ -148,14 +93,13 @@ export class ft_pong {
         this.player1.paddle.draw(this.ctx);
         this.ctx.fillStyle = "white";
         this.ctx.font = "30px Arial";
-        console.log(this.player0.isReady, this.player1.isReady);
-        if(!this.isLive && this.player0.isReady == this.player1.isReady)
+        if(!this.isLive && this.player0.isReady == this.player1.isReady && !this.isSpec)
         {
-            this.ctx.fillText("Press space to start", this.canvas.width / 2 - 150, this.canvas.height / 2 - 150);
+            this.ctx.fillText("Press space to start", this.width / 2 - 150, this.height / 2 - 150);
         }
-        else if (!this.isLive)
+        else if (!this.isLive && !this.isSpec)
         {
-            this.ctx.fillText("Waiting for opponent", this.canvas.width / 2 - 150, this.canvas.height / 2 - 150);
+            this.ctx.fillText("Waiting for opponent", this.width / 2 - 150, this.height / 2 - 150);
         }
         if (this.isFinish)
         {
@@ -167,7 +111,6 @@ export class ft_pong {
     {
         if (!this.isFinish)
         {
-            this.precFrame = Date.now();
             if (this.isLive)	
             {
                 this.ball.move(this.ctx, this.player0, this.player1);
@@ -175,9 +118,6 @@ export class ft_pong {
                 this.player1.paddle.move(this.ctx);
             }
             this.draw();
-            this.ctx.fillStyle = "white";
-            this.ctx.fillText("FPS: " + 1000 / (Date.now() - this.precFrame), 10, 60);
-            setTimeout(() => this.loop(), 1000/60);
         }
     }
 
@@ -186,7 +126,7 @@ export class ft_pong {
         this.ctx.fillStyle = "white";
         this.ctx.font = "30px Arial";
         this.ctx.fillText(this.player0.getName() + " : " + this.player0.getScore(), 10, 30);
-        this.ctx.fillText(this.player1.getName() + " : " + this.player1.getScore(), this.canvas.width - 150, 30);
+        this.ctx.fillText(this.player1.getName() + " : " + this.player1.getScore(), this.width - 150, 30);
     }
 
     public screenFinish(): void
@@ -195,7 +135,7 @@ export class ft_pong {
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         this.ctx.fillStyle = "white";
         this.ctx.font = "30px Arial";
-        this.ctx.fillText("Finish", this.canvas.width / 2 - 150, this.canvas.height / 2 - 150);
+        this.ctx.fillText("Finish", this.width / 2 - 150, this.height / 2 - 150);
     }
 
     public startGame(): void
@@ -217,14 +157,23 @@ export class ft_pong {
     }
 
     private handlerUnready = (id: number): void => {
-        console.log("unready");
         this.isLive = false;
         const player = this.player0.id == id ? this.player0 : this.player1;
         player.isReady = false;
+        this.draw();
     }
 
     private handleGameFinish = (): void => {
         console.log("game finish");
+        this.isFinish = true;
+    }
+
+    public stop(): void
+    {
+        this.socket.off("game:info", this.handleGameUpdate);
+        this.socket.off("game:finish", this.handleGameFinish);
+        this.socket.off("game:live", this.handleLive);
+        this.socket.off("game:unready", this.handlerUnready);
         this.isFinish = true;
     }
 
